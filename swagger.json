@@ -1,43 +1,88 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "World Disaster Center API",
-      "version": "1.0.0",
-      "description": "API documentation for the World Disaster Center chatbot."
-    },
-    "paths": {
-      "/messages": {
-        "post": {
-          "summary": "Send a message",
-          "description": "Send a message to the chatbot and receive a response.",
-          "requestBody": {
-            "required": true,
+  "openapi": "3.0.0",
+  "info": {
+    "title": "World Disaster Center API",
+    "version": "1.0.0",
+    "description": "API documentation for the World Disaster Center chatbot, including RESTful endpoints and WebSocket interactions."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/message": {
+      "post": {
+        "summary": "Send a message",
+        "description": "Send a message to the chatbot and receive a response.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "What should I do in case of an earthquake?"
+                  }
+                },
+                "required": ["message"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response from the chatbot",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
                     "message": {
                       "type": "string",
-                      "example": "What should I do in case of an earthquake?"
+                      "example": "In case of an earthquake, take cover under a sturdy piece of furniture."
                     }
-                  },
-                  "required": ["message"]
+                  }
                 }
               }
             }
           },
-          "responses": {
-            "200": {
-              "description": "Response from the chatbot",
-              "content": {
-                "application/json": {
-                  "schema": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/messages": {
+      "get": {
+        "summary": "Retrieve messages",
+        "description": "Get a list of all messages exchanged with the chatbot.",
+        "responses": {
+          "200": {
+            "description": "List of messages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                      "response": {
+                      "role": {
                         "type": "string",
-                        "example": "In case of an earthquake, take cover under a sturdy piece of furniture."
+                        "example": "user"
+                      },
+                      "content": {
+                        "type": "string",
+                        "example": "What should I do in case of an earthquake?"
                       }
                     }
                   }
@@ -46,52 +91,81 @@
             }
           }
         }
-      },
-      "/messages/{id}": {
-        "get": {
-          "summary": "Get a message by ID",
-          "description": "Retrieve a specific message by its ID.",
-          "parameters": [
-            {
-              "name": "id",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "example": "12345"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Message details",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "message": {
-                        "type": "string",
-                        "example": "What should I do in case of an earthquake?"
-                      },
-                      "response": {
-                        "type": "string",
-                        "example": "In case of an earthquake, take cover under a sturdy piece of furniture."
-                      }
-                    }
-                  }
+      }
+    },
+    "/api-docs": {
+      "get": {
+        "summary": "Get API documentation",
+        "description": "Fetch the API documentation in Swagger UI.",
+        "responses": {
+          "200": {
+            "description": "API documentation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Documentation"
                 }
               }
-            },
-            "404": {
-              "description": "Message not found"
+            }
+          }
+        }
+      }
+    },
+    "/socket-info": {
+      "get": {
+        "summary": "WebSocket Interaction",
+        "description": "Provides details about WebSocket interactions, including events and messages.",
+        "responses": {
+          "200": {
+            "description": "WebSocket interaction details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebSocketInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Documentation": {
+        "type": "object",
+        "properties": {
+          "info": {
+            "type": "string",
+            "example": "This endpoint provides access to the API documentation via Swagger UI."
+          }
+        }
+      },
+      "WebSocketInfo": {
+        "type": "object",
+        "properties": {
+          "info": {
+            "type": "string",
+            "example": "This endpoint provides information about WebSocket interactions. For real-time chat, use Socket.IO at /."
+          },
+          "events": {
+            "type": "object",
+            "properties": {
+              "user_message": {
+                "type": "string",
+                "example": "Emitted when a user sends a message."
+              },
+              "bot_message": {
+                "type": "string",
+                "example": "Emitted when the bot sends a response."
+              }
             }
           }
         }
       }
     }
   }
-  
-  
+}
+
   
   
