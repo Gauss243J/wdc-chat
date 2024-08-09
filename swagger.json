@@ -1,0 +1,97 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "World Disaster Center API",
+      "version": "1.0.0",
+      "description": "API documentation for the World Disaster Center chatbot."
+    },
+    "paths": {
+      "/messages": {
+        "post": {
+          "summary": "Send a message",
+          "description": "Send a message to the chatbot and receive a response.",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "What should I do in case of an earthquake?"
+                    }
+                  },
+                  "required": ["message"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Response from the chatbot",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "response": {
+                        "type": "string",
+                        "example": "In case of an earthquake, take cover under a sturdy piece of furniture."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/messages/{id}": {
+        "get": {
+          "summary": "Get a message by ID",
+          "description": "Retrieve a specific message by its ID.",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "12345"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Message details",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "example": "What should I do in case of an earthquake?"
+                      },
+                      "response": {
+                        "type": "string",
+                        "example": "In case of an earthquake, take cover under a sturdy piece of furniture."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Message not found"
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  
+  
+  

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Disaster Center Chat</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f8f9fa; 
+        }
+        #chat { 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            border: 1px solid #ccc; 
+            border-radius: 10px; 
+            background-color: #ffffff; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 { 
+            margin-top: 0; 
+            text-align: center; 
+            color: #007bff; 
+        }
+        #messages { 
+            list-style-type: none; 
+            margin: 0; 
+            padding: 0; 
+            height: 300px; 
+            overflow-y: auto; 
+        }
+        #messages li { 
+            padding: 8px 10px; 
+            margin-bottom: 5px; 
+            border-radius: 5px; 
+            word-wrap: break-word; 
+        }
+        #messages .user { 
+            background-color: #d1e7fd; 
+            text-align: right; 
+        }
+        #messages .bot { 
+            background-color: #f1f1f1; 
+            text-align: left; 
+        }
+        #message-form { 
+            display: flex; 
+            margin-top: 10px; 
+        }
+        #message-form input { 
+            flex: 1; 
+            padding: 10px; 
+            border-radius: 5px; 
+            border: 1px solid #ccc; 
+            margin-right: 10px; 
+        }
+        #message-form button { 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            border: none; 
+            background-color: #007bff; 
+            color: white; 
+            cursor: pointer; 
+        }
+        #message-form button:hover { 
+            background-color: #0056b3; 
+        }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <h2>World Disaster Center 🌐</h2>
+        <ul id="messages"></ul>
+        <form id="message-form">
+            <input id="m" autocomplete="off" placeholder="Type a message..." />
+            <button>Send</button>
+        </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const form = document.getElementById('message-form');
+        const input = document.getElementById('m');
+        const messages = document.getElementById('messages');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value) {
+                const userMessage = input.value;
+                const userLi = document.createElement('li');
+                userLi.textContent = userMessage;
+                userLi.className = 'user';
+                messages.appendChild(userLi);
+
+                socket.emit('user_message', userMessage);
+                input.value = '';
+            }
+        });
+
+        socket.on('bot_message', function(msg) {
+            const botLi = document.createElement('li');
+            botLi.textContent = msg;
+            botLi.className = 'bot';
+            messages.appendChild(botLi);
+        });
+    </script>
+</body>
+</html>
+
