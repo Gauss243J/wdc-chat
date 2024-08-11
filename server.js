@@ -6,6 +6,7 @@ const { Server } = require('socket.io');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const OpenAI = require('openai');
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
@@ -15,6 +16,10 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY, // Replace with your OpenAI API key
 });
 
+// Enable CORS for all origins
+app.use(cors({
+    origin: '*',
+}));
 
 const model = 'gpt-3.5-turbo';
 
@@ -45,6 +50,7 @@ app.post('/message', async (req, res) => {
                 { role: "system", content: "You are a helpful assistant focused on disasters and natural catastrophes. Even if a user makes a spelling mistake or uses synonyms, try to understand the intent and provide relevant disaster-related information." },
                 { role: "user", content: `Please answer only if the question is related to disasters. ${message}` }
             ],
+             max_tokens:200,
         });
 
         const aiMessage = response.choices[0].message.content;
@@ -81,6 +87,7 @@ io.on('connection', (socket) => {
             const response = await openai.chat.completions.create({
                 model: model,
                 messages: messages,
+                 max_tokens:200,
             });
 
             const aiMessage = response.choices[0].message.content;
